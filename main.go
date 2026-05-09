@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"database/sql"
 	"fmt"
 	"log"
 	"os"
@@ -24,6 +25,18 @@ func main() {
 		log.Fatalf("Error reading config file: %v", err)
 	}
 
+	db, err := sql.Open("postgres", cfg.DBURL)
+	if err != nil {
+		log.Fatalf("error connecting to db: %v", err)
+	}
+	defer db.Close()
+	dbQueries := database.New(db)
+
+	programState := &state{
+		db:  dbQueries,
+		cfg: &cfg,
+	}
+
 	reader := bufio.NewScanner(os.Stdin)
 	for {
 		fmt.Print("Billsly > ")
@@ -42,7 +55,7 @@ func main() {
 
 		command, exists := getCommands()[commandName]
 		if exists {
-			err := command.callback(cfg, args...)
+			err := command.callback(programState, args...)
 			if err != nil {
 				fmt.Println(err)
 			}
@@ -63,7 +76,7 @@ func cleanInput(text string) []string {
 type cliCommand struct {
 	name        string
 	description string
-	callback    func(config.Config, ...string) error
+	callback    func(*state, ...string) error
 }
 
 func getCommands() map[string]cliCommand {
@@ -72,6 +85,11 @@ func getCommands() map[string]cliCommand {
 			name:        "help",
 			description: "Displays a help message",
 			callback:    commandHelp,
+		},
+		"register": {
+			name:        "register",
+			description: "Register a new user",
+			callback:    commandRegister,
 		},
 		"exit": {
 			name:        "exit",
