@@ -91,6 +91,16 @@ func getCommands() map[string]cliCommand {
 			description: "Register a new user",
 			callback:    commandRegister,
 		},
+		"users": {
+			name:        "users",
+			description: "Display all registered users",
+			callback:    commandListUsers,
+		},
+		"reset": {
+			name:        "reset",
+			description: "Delete all users",
+			callback:    commandReset,
+		},
 		"exit": {
 			name:        "exit",
 			description: "Exit the application",
