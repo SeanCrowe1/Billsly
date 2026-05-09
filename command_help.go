@@ -1,8 +1,12 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
 
-func commandHelp(args ...string) error {
+	"Billsly/internal/config"
+)
+
+func commandHelp(cfg config.Config, args ...string) error {
 	fmt.Println()
 	fmt.Println("Welcome to Billsly!")
 	fmt.Println("Usage:")
