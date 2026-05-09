@@ -2,7 +2,6 @@ package config
 
 import (
 	"encoding/json"
-	"fmt"
 	"os"
 	"path/filepath"
 )
@@ -35,7 +34,7 @@ func Read() (Config, error) {
 	cfg := Config{}
 	err = decoder.Decode(&cfg)
 	if err != nil {
-		return Config{}, fmt.Errorf("Error 3: %v", err)
+		return Config{}, err
 	}
 
 	return cfg, nil
