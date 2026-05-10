@@ -10,6 +10,18 @@ import (
 	"github.com/google/uuid"
 )
 
+type Transaction struct {
+	ID        uuid.UUID
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	Name      string
+	Type      string
+	Amount    float64
+	DueDate   int32
+	Bank      string
+	UserID    uuid.UUID
+}
+
 type User struct {
 	ID        uuid.UUID
 	CreatedAt time.Time

@@ -96,6 +96,11 @@ func getCommands() map[string]cliCommand {
 			description: "Display all registered users",
 			callback:    commandListUsers,
 		},
+		"bill": {
+			name:        "bill",
+			description: "Add a bill to the database",
+			callback:    commandCreateTransaction,
+		},
 		"reset": {
 			name:        "reset",
 			description: "Delete all users",
