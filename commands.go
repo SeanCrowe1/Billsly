@@ -23,6 +23,11 @@ func getCommands() map[string]cliCommand {
 			description: "Switch current user or print a named transaction",
 			callback:    commandSelect,
 		},
+		"report": {
+			name:        "report",
+			description: "Generate a budget report for current user",
+			callback:    commandReport,
+		},
 		"users": {
 			name:        "users",
 			description: "Display all registered users",

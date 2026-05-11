@@ -67,6 +67,33 @@ func (q *Queries) DeleteTransaction(ctx context.Context, id uuid.UUID) error {
 	return err
 }
 
+const getAllBanks = `-- name: GetAllBanks :many
+SELECT DISTINCT bank FROM transactions
+`
+
+func (q *Queries) GetAllBanks(ctx context.Context) ([]string, error) {
+	rows, err := q.db.QueryContext(ctx, getAllBanks)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []string
+	for rows.Next() {
+		var bank string
+		if err := rows.Scan(&bank); err != nil {
+			return nil, err
+		}
+		items = append(items, bank)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getInTransactionsForUser = `-- name: GetInTransactionsForUser :many
 SELECT id, created_at, updated_at, t_name, t_type, amount, due_date, bank, user_id FROM transactions
 Where user_id = $1

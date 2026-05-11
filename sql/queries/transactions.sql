@@ -21,6 +21,9 @@ SELECT * FROM transactions
 Where user_id = $1
 AND t_type = 'out';
 
+-- name: GetAllBanks :many
+SELECT DISTINCT bank FROM transactions;
+
 -- name: DeleteTransaction :exec
 DELETE FROM transactions
 WHERE id = $1;
