@@ -56,3 +56,35 @@ func (q *Queries) CreateTransaction(ctx context.Context, arg CreateTransactionPa
 	)
 	return i, err
 }
+
+const deleteTransaction = `-- name: DeleteTransaction :exec
+DELETE FROM transactions
+WHERE id = $1
+`
+
+func (q *Queries) DeleteTransaction(ctx context.Context, id uuid.UUID) error {
+	_, err := q.db.ExecContext(ctx, deleteTransaction, id)
+	return err
+}
+
+const getTransactionByName = `-- name: GetTransactionByName :one
+SELECT id, created_at, updated_at, name, type, amount, due_date, bank, user_id FROM transactions
+WHERE name = $1
+`
+
+func (q *Queries) GetTransactionByName(ctx context.Context, name string) (Transaction, error) {
+	row := q.db.QueryRowContext(ctx, getTransactionByName, name)
+	var i Transaction
+	err := row.Scan(
+		&i.ID,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.Name,
+		&i.Type,
+		&i.Amount,
+		&i.DueDate,
+		&i.Bank,
+		&i.UserID,
+	)
+	return i, err
+}

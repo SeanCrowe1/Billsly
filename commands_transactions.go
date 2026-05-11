@@ -74,6 +74,25 @@ func commandCreateTransaction(s *state, args ...string) error {
 	return nil
 }
 
+func commandDeleteTransaction(s *state, args ...string) error {
+	if len(args) != 1 {
+		return fmt.Errorf("Usage: delete <name>")
+	}
+
+	name := args[0]
+	bill, err := s.db.GetTransactionByName(context.Background(), name)
+	if err != nil {
+		return fmt.Errorf("Failed to get transaction '%v': %v", name, err)
+	}
+
+	err = s.db.DeleteTransaction(context.Background(), bill.ID)
+	if err != nil {
+		return fmt.Errorf("Failed to delete transaction '%v': %v", name, err)
+	}
+
+	return nil
+}
+
 func printTransaction(t database.Transaction) {
 	fmt.Printf(" * ID:         %v\n", t.ID)
 	fmt.Printf(" * Name:       %v\n", t.Name)
