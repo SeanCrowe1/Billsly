@@ -97,8 +97,18 @@ func printTransaction(t database.Transaction) {
 	fmt.Printf(" * ID:         %v\n", t.ID)
 	fmt.Printf(" * Name:       %v\n", t.Name)
 	fmt.Printf(" * Type:       %v\n", t.Type)
-	fmt.Printf(" * Amount:     %v\n", t.Amount)
-	fmt.Printf(" * DueDate:    %v\n", t.DueDate)
+	fmt.Printf(" * Amount:     €%v\n", t.Amount)
+	if len(fmt.Sprintf("%v", t.DueDate)) == 1 {
+		fmt.Printf(" * DueDate:    0%v\n", t.DueDate)
+	} else {
+		fmt.Printf(" * DueDate:    %v\n", t.DueDate)
+	}
 	fmt.Printf(" * Bank:       %v\n", t.Bank)
 	fmt.Printf(" * UserID:     %v\n", t.UserID)
+}
+
+func printShortTransaction(t database.Transaction) {
+	fmt.Printf(" * Name:      %v\n", t.Name)
+	fmt.Printf(" * Amount:    €%v\n", t.Amount)
+	fmt.Printf(" * Type:      %v\n", t.Type)
 }

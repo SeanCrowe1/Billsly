@@ -50,6 +50,15 @@ func selectBill(s *state, name string) error {
 		return fmt.Errorf("Failed to get transaction '%v': %v", name, err)
 	}
 
+	user, err := s.db.GetUserByName(context.Background(), s.cfg.CurrentUserName)
+	if err != nil {
+		return fmt.Errorf("Failed to get user '%v': %v", name, err)
+	}
+
+	if user.ID != bill.UserID {
+		return fmt.Errorf("Bill '%v' is not registered for current user", name)
+	}
+
 	printTransaction(bill)
 
 	return nil
