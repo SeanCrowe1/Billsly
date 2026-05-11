@@ -58,8 +58,8 @@ func commandCreateTransaction(s *state, args ...string) error {
 		ID:        uuid.New(),
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
-		Name:      name,
-		Type:      transactionType,
+		TName:     name,
+		TType:     transactionType,
 		Amount:    amount,
 		DueDate:   day,
 		Bank:      bank,
@@ -95,8 +95,8 @@ func commandDeleteTransaction(s *state, args ...string) error {
 
 func printTransaction(t database.Transaction) {
 	fmt.Printf(" * ID:         %v\n", t.ID)
-	fmt.Printf(" * Name:       %v\n", t.Name)
-	fmt.Printf(" * Type:       %v\n", t.Type)
+	fmt.Printf(" * Name:       %v\n", t.TName)
+	fmt.Printf(" * Type:       %v\n", t.TType)
 	fmt.Printf(" * Amount:     €%v\n", t.Amount)
 	if len(fmt.Sprintf("%v", t.DueDate)) == 1 {
 		fmt.Printf(" * DueDate:    0%v\n", t.DueDate)
@@ -108,7 +108,7 @@ func printTransaction(t database.Transaction) {
 }
 
 func printShortTransaction(t database.Transaction) {
-	fmt.Printf(" * Name:      %v\n", t.Name)
+	fmt.Printf(" * Name:      %v\n", t.TName)
 	fmt.Printf(" * Amount:    €%v\n", t.Amount)
-	fmt.Printf(" * Type:      %v\n", t.Type)
+	fmt.Printf(" * Type:      %v\n", t.TType)
 }

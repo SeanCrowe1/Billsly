@@ -13,17 +13,17 @@ import (
 )
 
 const createTransaction = `-- name: CreateTransaction :one
-INSERT INTO transactions (id, created_at, updated_at, name, type, amount, due_date, bank, user_id)
+INSERT INTO transactions (id, created_at, updated_at, t_name, t_type, amount, due_date, bank, user_id)
 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-RETURNING id, created_at, updated_at, name, type, amount, due_date, bank, user_id
+RETURNING id, created_at, updated_at, t_name, t_type, amount, due_date, bank, user_id
 `
 
 type CreateTransactionParams struct {
 	ID        uuid.UUID
 	CreatedAt time.Time
 	UpdatedAt time.Time
-	Name      string
-	Type      string
+	TName     string
+	TType     string
 	Amount    float64
 	DueDate   int32
 	Bank      string
@@ -35,8 +35,8 @@ func (q *Queries) CreateTransaction(ctx context.Context, arg CreateTransactionPa
 		arg.ID,
 		arg.CreatedAt,
 		arg.UpdatedAt,
-		arg.Name,
-		arg.Type,
+		arg.TName,
+		arg.TType,
 		arg.Amount,
 		arg.DueDate,
 		arg.Bank,
@@ -47,8 +47,8 @@ func (q *Queries) CreateTransaction(ctx context.Context, arg CreateTransactionPa
 		&i.ID,
 		&i.CreatedAt,
 		&i.UpdatedAt,
-		&i.Name,
-		&i.Type,
+		&i.TName,
+		&i.TType,
 		&i.Amount,
 		&i.DueDate,
 		&i.Bank,
@@ -67,24 +67,140 @@ func (q *Queries) DeleteTransaction(ctx context.Context, id uuid.UUID) error {
 	return err
 }
 
-const getTransactionByName = `-- name: GetTransactionByName :one
-SELECT id, created_at, updated_at, name, type, amount, due_date, bank, user_id FROM transactions
-WHERE name = $1
+const getInTransactionsForUser = `-- name: GetInTransactionsForUser :many
+SELECT id, created_at, updated_at, t_name, t_type, amount, due_date, bank, user_id FROM transactions
+Where user_id = $1
+AND t_type = 'in'
 `
 
-func (q *Queries) GetTransactionByName(ctx context.Context, name string) (Transaction, error) {
-	row := q.db.QueryRowContext(ctx, getTransactionByName, name)
+func (q *Queries) GetInTransactionsForUser(ctx context.Context, userID uuid.UUID) ([]Transaction, error) {
+	rows, err := q.db.QueryContext(ctx, getInTransactionsForUser, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Transaction
+	for rows.Next() {
+		var i Transaction
+		if err := rows.Scan(
+			&i.ID,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.TName,
+			&i.TType,
+			&i.Amount,
+			&i.DueDate,
+			&i.Bank,
+			&i.UserID,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getOutTransactionsForUser = `-- name: GetOutTransactionsForUser :many
+SELECT id, created_at, updated_at, t_name, t_type, amount, due_date, bank, user_id FROM transactions
+Where user_id = $1
+AND t_type = 'out'
+`
+
+func (q *Queries) GetOutTransactionsForUser(ctx context.Context, userID uuid.UUID) ([]Transaction, error) {
+	rows, err := q.db.QueryContext(ctx, getOutTransactionsForUser, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Transaction
+	for rows.Next() {
+		var i Transaction
+		if err := rows.Scan(
+			&i.ID,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.TName,
+			&i.TType,
+			&i.Amount,
+			&i.DueDate,
+			&i.Bank,
+			&i.UserID,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getTransactionByName = `-- name: GetTransactionByName :one
+SELECT id, created_at, updated_at, t_name, t_type, amount, due_date, bank, user_id FROM transactions
+WHERE t_name = $1
+`
+
+func (q *Queries) GetTransactionByName(ctx context.Context, tName string) (Transaction, error) {
+	row := q.db.QueryRowContext(ctx, getTransactionByName, tName)
 	var i Transaction
 	err := row.Scan(
 		&i.ID,
 		&i.CreatedAt,
 		&i.UpdatedAt,
-		&i.Name,
-		&i.Type,
+		&i.TName,
+		&i.TType,
 		&i.Amount,
 		&i.DueDate,
 		&i.Bank,
 		&i.UserID,
 	)
 	return i, err
+}
+
+const getTransactionsForUser = `-- name: GetTransactionsForUser :many
+SELECT id, created_at, updated_at, t_name, t_type, amount, due_date, bank, user_id FROM transactions
+Where user_id = $1
+`
+
+func (q *Queries) GetTransactionsForUser(ctx context.Context, userID uuid.UUID) ([]Transaction, error) {
+	rows, err := q.db.QueryContext(ctx, getTransactionsForUser, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Transaction
+	for rows.Next() {
+		var i Transaction
+		if err := rows.Scan(
+			&i.ID,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.TName,
+			&i.TType,
+			&i.Amount,
+			&i.DueDate,
+			&i.Bank,
+			&i.UserID,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }

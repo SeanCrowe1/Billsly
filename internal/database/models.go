@@ -14,8 +14,8 @@ type Transaction struct {
 	ID        uuid.UUID
 	CreatedAt time.Time
 	UpdatedAt time.Time
-	Name      string
-	Type      string
+	TName     string
+	TType     string
 	Amount    float64
 	DueDate   int32
 	Bank      string
