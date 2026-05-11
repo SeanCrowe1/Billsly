@@ -6,6 +6,9 @@ import (
 )
 
 func commandSelect(s *state, args ...string) error {
+	if len(args) == 0 {
+		return fmt.Errorf("Usage: select user <name>\n       select bill <name>\n       select bills")
+	}
 	var err error
 
 	switch args[0] {
