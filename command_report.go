@@ -28,7 +28,7 @@ func commandReport(s *state, args ...string) error {
 	initial := strings.ToUpper(string(s.cfg.CurrentUserName[0]))
 	name := initial + string(s.cfg.CurrentUserName[1:])
 
-	report := fmt.Sprintf("%v's Budget Report:\n", name)
+	report := fmt.Sprintf("%v's Budget Report:\n\n", name)
 	report += "------------------------\n\n"
 
 	formatted, err := formatReport(s, inBills, outBills)
@@ -46,7 +46,7 @@ func commandReport(s *state, args ...string) error {
 	}
 
 	fmt.Println(report)
-	fmt.Printf("\n --- Report written to %v --- \n", fileName)
+	fmt.Printf("\n --- Report written to %v --- \n\n", fileName)
 
 	return nil
 }
@@ -56,23 +56,29 @@ func formatReport(s *state, income, expenditures []database.Transaction) (string
 	report := "Income:\n"
 	for _, bill := range income {
 		incomeAmount += bill.Amount
-		report += fmt.Sprintf("\nName:       %v\nAmount:     %v\nDue:        %v\nBank:       %v\n", bill.TName, bill.Amount, bill.DueDate, bill.Bank)
+		report += fmt.Sprintf("\nName:       %v\nAmount:     €%v\nDue:        %v\nBank:       %v\n", bill.TName, bill.Amount, bill.DueDate, bill.Bank)
 	}
+
+	report += "\n------------------------\n"
 
 	expenditureAmount := 0.00
 
 	report += "\nOutcome:\n"
 	for _, bill := range expenditures {
 		expenditureAmount += bill.Amount
-		report += fmt.Sprintf("\nName:       %v\nAmount:     %v\nDue:        %v\nBank:       %v\n", bill.TName, bill.Amount, bill.DueDate, bill.Bank)
+		report += fmt.Sprintf("\nName:       %v\nAmount:     €%v\nDue:        %v\nBank:       %v\n", bill.TName, bill.Amount, bill.DueDate, bill.Bank)
 	}
 
-	report += fmt.Sprintf("\nMonthly Allowance:  €%v\n", (incomeAmount - expenditureAmount))
+	report += "\n------------------------\n"
+
+	report += fmt.Sprintf("\nMonthly Allowance:  €%.2f\n\n", (incomeAmount - expenditureAmount))
 
 	banks, err := s.db.GetAllBanks(context.Background())
 	if err != nil {
 		return "", fmt.Errorf("Failed to get banks list: %v", err)
 	}
+
+	report += "------------------------\n"
 
 	for _, bank := range banks {
 		cost := 0.00
@@ -81,8 +87,10 @@ func formatReport(s *state, income, expenditures []database.Transaction) (string
 				cost += bill.Amount
 			}
 		}
-		report += fmt.Sprintf("\n%v:  €%v", bank, cost)
+		report += fmt.Sprintf("\n%v:  €%.2f", bank, cost)
 	}
+
+	report += "\n"
 
 	return report, nil
 }

@@ -98,6 +98,7 @@ const getInTransactionsForUser = `-- name: GetInTransactionsForUser :many
 SELECT id, created_at, updated_at, t_name, t_type, amount, due_date, bank, user_id FROM transactions
 Where user_id = $1
 AND t_type = 'in'
+ORDER BY due_date, t_name
 `
 
 func (q *Queries) GetInTransactionsForUser(ctx context.Context, userID uuid.UUID) ([]Transaction, error) {
@@ -137,6 +138,7 @@ const getOutTransactionsForUser = `-- name: GetOutTransactionsForUser :many
 SELECT id, created_at, updated_at, t_name, t_type, amount, due_date, bank, user_id FROM transactions
 Where user_id = $1
 AND t_type = 'out'
+ORDER BY due_date, t_name
 `
 
 func (q *Queries) GetOutTransactionsForUser(ctx context.Context, userID uuid.UUID) ([]Transaction, error) {

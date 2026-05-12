@@ -14,12 +14,14 @@ Where user_id = $1;
 -- name: GetInTransactionsForUser :many
 SELECT * FROM transactions
 Where user_id = $1
-AND t_type = 'in';
+AND t_type = 'in'
+ORDER BY due_date, t_name;
 
 -- name: GetOutTransactionsForUser :many
 SELECT * FROM transactions
 Where user_id = $1
-AND t_type = 'out';
+AND t_type = 'out'
+ORDER BY due_date, t_name;
 
 -- name: GetAllBanks :many
 SELECT DISTINCT bank FROM transactions;
