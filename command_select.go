@@ -62,7 +62,7 @@ func selectBill(s *state, name string) error {
 
 	user, err := s.db.GetUserByName(context.Background(), s.cfg.CurrentUserName)
 	if err != nil {
-		return fmt.Errorf("Failed to get user '%v': %v", name, err)
+		return fmt.Errorf("Failed to get user '%v': %v", s.cfg.CurrentUserName, err)
 	}
 
 	if user.ID != bill.UserID {

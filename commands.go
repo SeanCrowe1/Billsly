@@ -38,6 +38,11 @@ func getCommands() map[string]cliCommand {
 			description: "Add a bill to the database",
 			callback:    commandCreateTransaction,
 		},
+		"edit": {
+			name:        "edit",
+			description: "Edit an existing bill's details",
+			callback:    commandEditTransaction,
+		},
 		"delete": {
 			name:        "delete",
 			description: "Delete a bill from the database",

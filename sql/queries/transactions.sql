@@ -26,6 +26,12 @@ ORDER BY due_date, t_name;
 -- name: GetAllBanks :many
 SELECT DISTINCT bank FROM transactions;
 
+-- name: EditTransaction :one
+UPDATE transactions
+SET updated_at = $2, t_name = $3, t_type = $4, amount = $5, due_date = $6, bank = $7
+WHERE t_name = $1
+RETURNING *;
+
 -- name: DeleteTransaction :exec
 DELETE FROM transactions
 WHERE id = $1;

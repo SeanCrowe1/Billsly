@@ -67,6 +67,48 @@ func (q *Queries) DeleteTransaction(ctx context.Context, id uuid.UUID) error {
 	return err
 }
 
+const editTransaction = `-- name: EditTransaction :one
+UPDATE transactions
+SET updated_at = $2, t_name = $3, t_type = $4, amount = $5, due_date = $6, bank = $7
+WHERE t_name = $1
+RETURNING id, created_at, updated_at, t_name, t_type, amount, due_date, bank, user_id
+`
+
+type EditTransactionParams struct {
+	TName     string
+	UpdatedAt time.Time
+	TName_2   string
+	TType     string
+	Amount    float64
+	DueDate   int32
+	Bank      string
+}
+
+func (q *Queries) EditTransaction(ctx context.Context, arg EditTransactionParams) (Transaction, error) {
+	row := q.db.QueryRowContext(ctx, editTransaction,
+		arg.TName,
+		arg.UpdatedAt,
+		arg.TName_2,
+		arg.TType,
+		arg.Amount,
+		arg.DueDate,
+		arg.Bank,
+	)
+	var i Transaction
+	err := row.Scan(
+		&i.ID,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.TName,
+		&i.TType,
+		&i.Amount,
+		&i.DueDate,
+		&i.Bank,
+		&i.UserID,
+	)
+	return i, err
+}
+
 const getAllBanks = `-- name: GetAllBanks :many
 SELECT DISTINCT bank FROM transactions
 `
