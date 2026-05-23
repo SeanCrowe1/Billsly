@@ -63,7 +63,7 @@ func formatReport(s *state, income, expenditures []database.Transaction) (string
 
 	expenditureAmount := 0.00
 
-	report += "\nOutcome:\n"
+	report += "\nCosts:\n"
 	for _, bill := range expenditures {
 		expenditureAmount += bill.Amount
 		report += fmt.Sprintf("\nName:       %v\nAmount:     €%v\nDue:        %v\nBank:       %v\n", bill.TName, bill.Amount, bill.DueDate, bill.Bank)
